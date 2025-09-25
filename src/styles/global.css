@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/* Base styles for light/dark mode */
+html {
+  @apply text-gray-900 transition-colors duration-300;
+  background-color: #e6e4e0; /* Custom beige background */
+}
+
+html.dark {
+  @apply text-white;
+  background-color: #000000; /* Pure black background */
+}
+
+/* Smooth transitions for all elements */
+* {
+  @apply transition-colors duration-300;
+}

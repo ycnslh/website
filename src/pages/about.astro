@@ -1,0 +1,123 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<script is:inline>
+			if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+				document.documentElement.classList.add('dark')
+			} else {
+				document.documentElement.classList.remove('dark')
+			}
+		</script>
+		<BaseHead title="About - Reho" description="About Reho - Systems Engineer" />
+		<style>
+			body {
+				overflow: hidden;
+				height: 100vh;
+				display: flex;
+				flex-direction: column;
+			}
+
+			main {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				flex: 1;
+				padding: 2rem;
+			}
+
+			:global(footer) {
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				z-index: 10;
+			}
+
+			.typewriter-container {
+				font-size: 1.5rem;
+				font-weight: 300;
+				text-align: center;
+				color: #111827;
+				line-height: 1.6;
+			}
+
+			.dark .typewriter-container {
+				color: #f9fafb;
+			}
+
+			.typewriter-text {
+				display: inline-block;
+				border-right: 2px solid #111827;
+				animation: blink 1s infinite;
+			}
+
+			.dark .typewriter-text {
+				border-right-color: #f9fafb;
+			}
+
+			.typewriter-text.finished {
+				border-right: none;
+				animation: none;
+			}
+
+			@keyframes blink {
+				0%, 50% { border-right-color: transparent; }
+				51%, 100% { border-right-color: currentColor; }
+			}
+
+			@media (max-width: 768px) {
+				.typewriter-container {
+					font-size: 1.25rem;
+					padding: 0 1rem;
+				}
+			}
+
+			@media (max-width: 480px) {
+				.typewriter-container {
+					font-size: 1rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="typewriter-container">
+				<span id="typewriter" class="typewriter-text"></span>
+			</div>
+		</main>
+
+		<script>
+			const text = "someone building some things.";
+			const typewriterElement = document.getElementById('typewriter');
+			let index = 0;
+
+			function typeWriter() {
+				if (index < text.length) {
+					typewriterElement.textContent += text.charAt(index);
+					index++;
+					setTimeout(typeWriter, 100); // 100ms between each character
+				} else {
+					// Remove cursor after typing is complete
+					setTimeout(() => {
+						typewriterElement.classList.add('finished');
+					}, 1000); // Wait 1 second before removing cursor
+				}
+			}
+
+			// Start typing effect when page loads
+			window.addEventListener('load', () => {
+				setTimeout(typeWriter, 500); // Start after 500ms delay
+			});
+		</script>
+		<Footer />
+	</body>
+</html>
