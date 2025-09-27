@@ -15,3 +15,49 @@ html.dark {
 * {
   @apply transition-colors duration-300;
 }
+
+/* Shiki code blocks styling */
+.astro-code {
+  border-radius: 8px;
+  padding: 1.5rem;
+  overflow-x: auto;
+  margin: 2rem 0;
+  border: 2px solid #d1d5db;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+}
+
+html.dark .astro-code {
+  border-color: #4b5563;
+}
+
+/* Dark mode theme switching as per Astro docs */
+html.dark .astro-code,
+html.dark .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+
+/* Scrollbar styling for code blocks */
+.astro-code::-webkit-scrollbar {
+  height: 8px;
+}
+
+.astro-code::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.astro-code::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+html.dark .astro-code::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+html.dark .astro-code::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+}

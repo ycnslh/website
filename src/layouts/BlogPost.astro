@@ -6,9 +6,11 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data'] & {
+	readingTime?: string;
+};
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, readingTime } = Astro.props;
 ---
 
 <html lang="en">
@@ -22,68 +24,242 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		</script>
 		<BaseHead title={title} description={description} />
 		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
+			body {
+				padding-bottom: 6rem;
 			}
+
+			main {
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 2rem 1rem;
+			}
+
 			.hero-image {
 				width: 100%;
+				margin-bottom: 3rem;
 			}
+
 			.hero-image img {
 				display: block;
 				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
+				border-radius: 16px;
+				width: 100%;
+				height: auto;
+				border: 1px solid #d1d5db;
 			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
+
+			.dark .hero-image img {
+				border-color: #4b5563;
 			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
+
+			.article-header {
 				text-align: center;
-				line-height: 1;
+				margin-bottom: 3rem;
+				padding-bottom: 2rem;
+				border-bottom: 1px solid #d1d5db;
 			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
+
+			.dark .article-header {
+				border-bottom-color: #4b5563;
 			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
+
+			.article-title {
+				font-size: 2.5rem;
+				font-weight: bold;
+				color: #000;
+				margin-bottom: 1rem;
+				line-height: 1.2;
 			}
-			.last-updated-on {
+
+			.dark .article-title {
+				color: #fff;
+			}
+
+			.article-meta {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 2rem;
+				color: #6b7280;
+				font-size: 0.875rem;
+				margin-bottom: 1rem;
+			}
+
+			.dark .article-meta {
+				color: #9ca3af;
+			}
+
+			.date-info, .reading-time {
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+			}
+
+			.last-updated {
 				font-style: italic;
+				color: #9ca3af;
+				font-size: 0.8rem;
+			}
+
+			.dark .last-updated {
+				color: #6b7280;
+			}
+
+			.prose {
+				color: #111827;
+				line-height: 1.7;
+				font-size: 1.1rem;
+			}
+
+			.dark .prose {
+				color: #f9fafb;
+			}
+
+			/* Let headings use native sizes, just handle dark mode */
+			.prose h1, .prose h2, .prose h3,
+			.prose h4, .prose h5, .prose h6 {
+				color: #000;
+			}
+
+			.dark .prose h1, .dark .prose h2, .dark .prose h3,
+			.dark .prose h4, .dark .prose h5, .dark .prose h6 {
+				color: #fff;
+			}
+
+			.prose p {
+				margin-bottom: 1.5rem;
+			}
+
+			.prose a {
+				color: #dc2626;
+				text-decoration: none;
+				border-bottom: 1px solid transparent;
+				transition: border-color 0.2s;
+			}
+
+			.prose a:hover {
+				border-bottom-color: #dc2626;
+			}
+
+			.prose ul, .prose ol {
+				margin-bottom: 1.5rem;
+				padding-left: 1.5rem;
+			}
+
+			.prose li {
+				margin-bottom: 0.5rem;
+			}
+
+			/* Inline code (not in pre blocks) */
+			.prose code:not(pre code) {
+				background-color: #f3f4f6;
+				color: #dc2626;
+				padding: 0.2rem 0.4rem;
+				border-radius: 4px;
+				font-size: 0.9em;
+				font-weight: 500;
+			}
+
+			.dark .prose code:not(pre code) {
+				background-color: #374151;
+				color: #fca5a5;
+			}
+
+
+			.prose blockquote {
+				border-left: 4px solid #dc2626;
+				padding-left: 1rem;
+				margin: 1.5rem 0;
+				font-style: italic;
+				color: #6b7280;
+			}
+
+			.dark .prose blockquote {
+				color: #9ca3af;
+			}
+
+			/* Animations */
+			@keyframes fadeInUp {
+				from {
+					opacity: 0;
+					transform: translateY(30px);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+
+			.animate-fadeInUp {
+				animation: fadeInUp 0.8s ease-out forwards;
+				opacity: 0;
+			}
+
+			@media (max-width: 768px) {
+				main {
+					padding: 1rem;
+				}
+
+				.article-title {
+					font-size: 2rem;
+				}
+
+				.article-meta {
+					flex-direction: column;
+					gap: 0.5rem;
+				}
+
+				.prose {
+					font-size: 1rem;
+				}
+
+				.prose h2 {
+					font-size: 1.5rem;
+				}
+
+				.prose h3 {
+					font-size: 1.2rem;
+				}
 			}
 		</style>
 	</head>
 
 	<body>
 		<Header />
-		<main>
+		<main class="animate-fadeInUp">
 			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
+				{heroImage && (
+					<div class="hero-image animate-fadeInUp" style="animation-delay: 0.1s;">
+						<Image width={1020} height={510} src={heroImage} alt={title} />
 					</div>
+				)}
+
+				<div class="article-header animate-fadeInUp" style="animation-delay: 0.2s;">
+					<h1 class="article-title">{title}</h1>
+					<div class="article-meta">
+						<div class="date-info">
+							<svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+								<path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+							</svg>
+							<FormattedDate date={pubDate} />
+						</div>
+						{readingTime && (
+							<div class="reading-time">
+								<svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+									<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+								</svg>
+								{readingTime}
+							</div>
+						)}
+						{updatedDate && (
+							<div class="last-updated">
+								Mis à jour le <FormattedDate date={updatedDate} />
+							</div>
+						)}
+					</div>
+				</div>
+
+				<div class="prose animate-fadeInUp" style="animation-delay: 0.3s;">
 					<slot />
 				</div>
 			</article>
