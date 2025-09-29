@@ -105,78 +105,60 @@ const { title, description, pubDate, updatedDate, heroImage, readingTime } = Ast
 				color: #6b7280;
 			}
 
-			.prose {
-				color: #111827;
-				line-height: 1.7;
-				font-size: 1.1rem;
+
+			/* Simple heading styles - direct targeting */
+			h1 {
+				font-size: 2.25rem !important;
+				font-weight: 800 !important;
+				margin-top: 2rem !important;
+				margin-bottom: 1rem !important;
+				color: #000 !important;
 			}
 
-			.dark .prose {
-				color: #f9fafb;
+			h2 {
+				font-size: 1.875rem !important;
+				font-weight: 700 !important;
+				margin-top: 2rem !important;
+				margin-bottom: 1rem !important;
+				color: #000 !important;
 			}
 
-			/* Let headings use native sizes, just handle dark mode */
-			.prose h1, .prose h2, .prose h3,
-			.prose h4, .prose h5, .prose h6 {
-				color: #000;
+			h3 {
+				font-size: 1.5rem !important;
+				font-weight: 600 !important;
+				margin-top: 1.5rem !important;
+				margin-bottom: 0.75rem !important;
+				color: #000 !important;
 			}
 
-			.dark .prose h1, .dark .prose h2, .dark .prose h3,
-			.dark .prose h4, .dark .prose h5, .dark .prose h6 {
-				color: #fff;
+			h4 {
+				font-size: 1.25rem !important;
+				font-weight: 600 !important;
+				margin-top: 1.5rem !important;
+				margin-bottom: 0.5rem !important;
+				color: #000 !important;
 			}
 
-			.prose p {
-				margin-bottom: 1.5rem;
+			h5 {
+				font-size: 1.125rem !important;
+				font-weight: 600 !important;
+				margin-top: 1rem !important;
+				margin-bottom: 0.5rem !important;
+				color: #000 !important;
 			}
 
-			.prose a {
-				color: #dc2626;
-				text-decoration: none;
-				border-bottom: 1px solid transparent;
-				transition: border-color 0.2s;
+			h6 {
+				font-size: 1rem !important;
+				font-weight: 600 !important;
+				margin-top: 1rem !important;
+				margin-bottom: 0.5rem !important;
+				color: #000 !important;
 			}
 
-			.prose a:hover {
-				border-bottom-color: #dc2626;
+			.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+				color: #fff !important;
 			}
 
-			.prose ul, .prose ol {
-				margin-bottom: 1.5rem;
-				padding-left: 1.5rem;
-			}
-
-			.prose li {
-				margin-bottom: 0.5rem;
-			}
-
-			/* Inline code (not in pre blocks) */
-			.prose code:not(pre code) {
-				background-color: #f3f4f6;
-				color: #dc2626;
-				padding: 0.2rem 0.4rem;
-				border-radius: 4px;
-				font-size: 0.9em;
-				font-weight: 500;
-			}
-
-			.dark .prose code:not(pre code) {
-				background-color: #374151;
-				color: #fca5a5;
-			}
-
-
-			.prose blockquote {
-				border-left: 4px solid #dc2626;
-				padding-left: 1rem;
-				margin: 1.5rem 0;
-				font-style: italic;
-				color: #6b7280;
-			}
-
-			.dark .prose blockquote {
-				color: #9ca3af;
-			}
 
 			/* Animations */
 			@keyframes fadeInUp {
@@ -259,7 +241,7 @@ const { title, description, pubDate, updatedDate, heroImage, readingTime } = Ast
 					</div>
 				</div>
 
-				<div class="prose animate-fadeInUp" style="animation-delay: 0.3s;">
+				<div class="prose prose-lg max-w-none dark:prose-invert animate-fadeInUp" style="animation-delay: 0.3s;">
 					<slot />
 				</div>
 			</article>

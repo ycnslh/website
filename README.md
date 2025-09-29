@@ -1,62 +1,141 @@
-# Astro Starter Kit: Blog
+# Personal Website
 
-```sh
-npm create astro@latest -- --template blog
+A modern, minimalist personal website built with Astro, featuring a blog and custom design.
+
+## 🚀 Features
+
+- **Blog** with Markdown/MDX support
+- **Advanced code blocks** with line numbers, copy button, diff notation, and syntax highlighting (Shiki)
+- **Full-text search** powered by Pagefind
+- **Dark mode** toggle
+- **Responsive design** with a dock-style navigation
+- **Typography** optimized for readability (Tailwind Typography)
+- **RSS feed** for blog posts
+- **Sitemap** generation
+- **Reading time** estimation for blog posts
+
+## 🛠️ Tech Stack
+
+- [Astro](https://astro.build/) - Static site generator
+- [Tailwind CSS v4](https://tailwindcss.com/) - Styling
+- [Shiki](https://shiki.matsu.io/) - Syntax highlighting
+- [Pagefind](https://pagefind.app/) - Search functionality
+- [MDX](https://mdxjs.com/) - Enhanced Markdown
+
+## 📦 Project Structure
+
 ```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-Features:
-
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-├── public/
+/
+├── public/           # Static assets
+│   └── icons/       # SVG icons
 ├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+│   ├── components/  # Reusable components
+│   ├── content/     # Blog posts (Markdown/MDX)
+│   ├── layouts/     # Page layouts
+│   ├── pages/       # Route pages
+│   ├── plugins/     # Custom Shiki transformers
+│   └── styles/      # Global styles
+└── astro.config.mjs # Astro configuration
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 🚦 Getting Started
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+### Prerequisites
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+- Node.js 18+
+- npm/pnpm/yarn
 
-Any static assets, like images, can be placed in the `public/` directory.
+### Installation
 
-## 🧞 Commands
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/website.git
 
-All commands are run from the root of the project, from a terminal:
+# Navigate to the project
+cd website
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+# Install dependencies
+npm install
 
-## 👀 Want to learn more?
+# Start development server
+npm run dev
+```
 
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+The site will be available at `http://localhost:4321`
 
-## Credit
+## 📝 Available Commands
 
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+| Command                | Action                                           |
+|:-----------------------|:-------------------------------------------------|
+| `npm install`          | Install dependencies                             |
+| `npm run dev`          | Start dev server at `localhost:4321`             |
+| `npm run build`        | Build production site to `./dist/`               |
+| `npm run preview`      | Preview build locally before deploying           |
+| `npm run astro ...`    | Run Astro CLI commands                           |
+
+## ✍️ Writing Blog Posts
+
+Create a new `.md` or `.mdx` file in `src/content/blog/`:
+
+```markdown
+---
+title: 'My Blog Post'
+description: 'A brief description'
+pubDate: 'Jan 01 2024'
+heroImage: '../../assets/image.jpg'
+---
+
+Your content here...
+```
+
+### Code Block Features
+
+Use advanced code block features in your posts:
+
+````markdown
+```js title="example.js"
+function hello() {
+  console.log("Old code") // [!code --]
+  console.log("New code") // [!code ++]
+  console.log("Highlighted") // [!code highlight]
+}
+```
+````
+
+## 🌐 Deployment
+
+This site is configured for GitHub Pages deployment using GitHub Actions.
+
+### Setup
+
+1. Go to your repository's **Settings** > **Pages**
+2. Under **Source**, select **GitHub Actions**
+3. Push to `main` branch to trigger automatic deployment
+
+### Custom Domain (Optional)
+
+To use a custom domain:
+
+1. Create `public/CNAME` with your domain:
+   ```
+   yourdomain.com
+   ```
+
+2. Update `astro.config.mjs`:
+   ```js
+   export default defineConfig({
+     site: 'https://yourdomain.com',
+   })
+   ```
+
+3. Configure DNS settings with your domain provider
+
+## 📄 License
+
+MIT License - feel free to use this project as inspiration for your own website!
+
+## 🙏 Acknowledgments
+
+- Design inspired by modern minimalist aesthetics
+- Code block styling inspired by [astro-theme-pure](https://github.com/cworld1/astro-theme-pure/)
+- Built with the amazing [Astro](https://astro.build/) framework
