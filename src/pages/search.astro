@@ -109,19 +109,58 @@ const query = Astro.url.searchParams.get("q") || "";
 				padding: 1rem 0;
 			}
 
+			/* Hide the "Search this site" label */
+			.pagefind-ui__search-label {
+				display: none !important;
+			}
+
+			/* Ensure search form has proper positioning */
+			.pagefind-ui__form {
+				position: relative !important;
+				display: block !important;
+				isolation: isolate !important;
+			}
+
+			/* Wrapper for search input */
+			.pagefind-ui__search {
+				position: relative !important;
+				display: block !important;
+			}
+
+			/* Container that wraps input and clear button */
+			.pagefind-ui > div {
+				position: relative !important;
+			}
+
+			/* Hide the search icon before input */
+			.pagefind-ui__search-input::before,
+			.pagefind-ui__form::before {
+				display: none !important;
+			}
+
+			/* Hide any svg/icon within the form */
+			.pagefind-ui__form svg:not(.pagefind-ui__search-clear svg) {
+				display: none !important;
+			}
+
+			/* Style the search input */
 			.pagefind-ui__search-input {
 				background-color: rgba(230, 228, 224, 0.9) !important;
 				border: 1px solid #9ca3af !important;
-				border-radius: 20px !important;
+				border-radius: 9999px !important; /* Same as rounded-full from navigation */
 				font-size: 1rem !important;
-				padding: 0.75rem 1rem !important;
+				padding: 0.75rem 1.25rem !important;
+				padding-right: 3.5rem !important;
 				color: #000 !important;
 				width: 100% !important;
+				height: 3rem !important;
+				font-family: inherit !important;
+				box-sizing: border-box !important;
 			}
 
 			.dark .pagefind-ui__search-input {
-				background-color: rgba(30, 30, 30, 0.9) !important;
-				border-color: #4b5563 !important;
+				background-color: rgba(60, 60, 60, 0.9) !important;
+				border-color: #6b7280 !important;
 				color: #fff !important;
 			}
 
@@ -129,6 +168,7 @@ const query = Astro.url.searchParams.get("q") || "";
 				outline: none !important;
 				border-color: #9ca3af !important;
 				background-color: rgba(200, 198, 194, 0.8) !important;
+				box-shadow: none !important;
 			}
 
 			.dark .pagefind-ui__search-input:focus {
@@ -137,11 +177,66 @@ const query = Astro.url.searchParams.get("q") || "";
 			}
 
 			.pagefind-ui__search-input::placeholder {
-				color: rgba(0, 0, 0, 0.6) !important;
+				color: rgba(0, 0, 0, 0.5) !important;
+				font-weight: 400 !important;
 			}
 
 			.dark .pagefind-ui__search-input::placeholder {
-				color: rgba(255, 255, 255, 0.6) !important;
+				color: rgba(255, 255, 255, 0.5) !important;
+			}
+
+			/* Style the clear button - lock it in position */
+			.pagefind-ui__search-clear {
+				position: absolute !important;
+				right: 0.75rem !important;
+				top: 0.5rem !important;
+				width: 2rem !important;
+				height: 2rem !important;
+				padding: 0 !important;
+				margin: 0 !important;
+				background-color: transparent !important;
+				border: none !important;
+				color: #6b7280 !important;
+				border-radius: 50% !important;
+				transition: background-color 0.2s ease, color 0.2s ease !important;
+				display: flex !important;
+				align-items: center !important;
+				justify-content: center !important;
+				cursor: pointer !important;
+				z-index: 100 !important;
+				pointer-events: auto !important;
+				flex-shrink: 0 !important;
+			}
+
+			.dark .pagefind-ui__search-clear {
+				color: #9ca3af !important;
+			}
+
+			.pagefind-ui__search-clear:hover {
+				background-color: rgba(0, 0, 0, 0.05) !important;
+				color: #111827 !important;
+			}
+
+			.dark .pagefind-ui__search-clear:hover {
+				background-color: rgba(255, 255, 255, 0.1) !important;
+				color: #f9fafb !important;
+			}
+
+			/* Hide the clear button default SVG and text, show only custom X */
+			.pagefind-ui__search-clear svg,
+			.pagefind-ui__search-clear span {
+				display: none !important;
+			}
+
+			.pagefind-ui__search-clear {
+				font-size: 0 !important; /* Hide any text content */
+			}
+
+			.pagefind-ui__search-clear::after {
+				content: "✕" !important;
+				font-size: 1.125rem !important;
+				font-weight: 300 !important;
+				line-height: 1 !important;
 			}
 
 			.pagefind-ui__results {

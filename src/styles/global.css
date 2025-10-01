@@ -5,6 +5,7 @@
 html {
   @apply text-gray-900 transition-colors duration-300;
   background-color: #e6e4e0; /* Custom beige background */
+  scrollbar-gutter: stable; /* Reserve space for scrollbar to prevent layout shift */
 }
 
 html.dark {
