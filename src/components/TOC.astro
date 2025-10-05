@@ -1,0 +1,141 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+	headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+
+// Filtrer pour garder seulement h2 et h3
+const tocHeadings = headings.filter(h => h.depth <= 3);
+---
+
+{tocHeadings.length > 0 && (
+	<nav class="toc" id="toc">
+		<h2 class="toc-title">Table of Contents</h2>
+		<ul class="toc-list">
+			{tocHeadings.map((heading) => (
+				<li class={`toc-item toc-level-${heading.depth}`}>
+					<a href={`#${heading.slug}`} class="toc-link">
+						{heading.text}
+					</a>
+				</li>
+			))}
+		</ul>
+	</nav>
+)}
+
+<style>
+	.toc {
+		padding: 0;
+	}
+
+	.toc-title {
+		font-size: 0.875rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: #000000;
+		margin-bottom: 1rem;
+	}
+
+	:global(.dark) .toc-title {
+		color: #ffffff;
+	}
+
+	.toc-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.toc-item {
+		margin-bottom: 0.5rem;
+	}
+
+	.toc-level-2 {
+		padding-left: 0;
+	}
+
+	.toc-level-3 {
+		padding-left: 1rem;
+		font-size: 0.875rem;
+	}
+
+	.toc-link {
+		color: #6b7280;
+		text-decoration: none;
+		transition: color 0.2s ease;
+		display: block;
+		line-height: 1.5;
+	}
+
+	.dark .toc-link {
+		color: #9ca3af;
+	}
+
+	.toc-link:hover {
+		color: #000000;
+	}
+
+	:global(.dark) .toc-link:hover {
+		color: #ffffff;
+	}
+
+	.toc-link.active {
+		color: #000000;
+		font-weight: 600;
+	}
+
+	:global(.dark) .toc-link.active {
+		color: #ffffff;
+	}
+</style>
+
+<script>
+	function initTOC() {
+		const tocLinks = document.querySelectorAll('.toc-link');
+		const headings = document.querySelectorAll('article h2, article h3');
+
+		if (!tocLinks.length || !headings.length) return;
+
+		function updateActiveLink() {
+			let current = '';
+
+			headings.forEach((heading) => {
+				const top = (heading as HTMLElement).offsetTop;
+				if (window.scrollY >= top - 100) {
+					current = heading.id;
+				}
+			});
+
+			tocLinks.forEach((link) => {
+				link.classList.remove('active');
+				if (link.getAttribute('href') === `#${current}`) {
+					link.classList.add('active');
+				}
+			});
+		}
+
+		window.addEventListener('scroll', updateActiveLink);
+		updateActiveLink();
+
+		// Smooth scroll
+		tocLinks.forEach((link) => {
+			link.addEventListener('click', (e) => {
+				e.preventDefault();
+				const target = document.querySelector(link.getAttribute('href') || '');
+				if (target) {
+					target.scrollIntoView({ behavior: 'smooth' });
+				}
+			});
+		});
+	}
+
+	// Init on load
+	document.addEventListener('DOMContentLoaded', initTOC);
+
+	// Re-init on view transitions
+	document.addEventListener('astro:page-load', initTOC);
+</script>

@@ -1,16 +1,19 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import TOC from '../components/TOC.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & {
 	readingTime?: string;
+	headings?: MarkdownHeading[];
 };
 
-const { title, description, pubDate, updatedDate, heroImage, readingTime, tags } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, readingTime, tags, headings = [] } = Astro.props;
 ---
 
 <html lang="en">
@@ -28,10 +31,54 @@ const { title, description, pubDate, updatedDate, heroImage, readingTime, tags }
 				padding-bottom: 6rem;
 			}
 
-			main {
-				max-width: 800px;
+			.article-container {
+				max-width: 1200px;
 				margin: 0 auto;
 				padding: 2rem 1rem;
+			}
+
+			.article-layout {
+				display: grid;
+				grid-template-columns: 1fr;
+				gap: 3rem;
+			}
+
+			main {
+				max-width: 800px;
+				width: 100%;
+			}
+
+			.toc-wrapper {
+				display: none;
+			}
+
+			@media (min-width: 1024px) {
+				.article-layout {
+					grid-template-columns: 1fr 300px;
+				}
+
+				.toc-wrapper {
+					display: block;
+				}
+
+				.toc-wrapper.desktop {
+					position: sticky;
+					top: 2rem;
+					align-self: start;
+					max-height: calc(100vh - 4rem);
+					overflow-y: auto;
+				}
+
+				.toc-wrapper.mobile {
+					display: none;
+				}
+			}
+
+			@media (max-width: 1023px) {
+				.toc-wrapper.mobile {
+					display: block;
+					margin-bottom: 2rem;
+				}
 			}
 
 			.hero-image {
@@ -241,53 +288,67 @@ const { title, description, pubDate, updatedDate, heroImage, readingTime, tags }
 
 	<body>
 		<Header />
-		<main class="animate-fadeInUp">
-			<article>
-				{heroImage && (
-					<div class="hero-image animate-fadeInUp" style="animation-delay: 0.1s;">
-						<Image width={1020} height={510} src={heroImage} alt={title} />
+		<div class="article-container">
+			<div class="article-layout">
+				<main class="animate-fadeInUp">
+					<!-- TOC Mobile (en haut sur mobile) -->
+					<div class="toc-wrapper mobile animate-fadeInUp" style="animation-delay: 0.1s;">
+						<TOC headings={headings} />
 					</div>
-				)}
 
-				<div class="article-header animate-fadeInUp" style="animation-delay: 0.2s;">
-					<h1 class="article-title">{title}</h1>
-					<div class="article-meta">
-						<div class="date-info">
-							<svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-								<path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
-							</svg>
-							<FormattedDate date={pubDate} />
-						</div>
-						{readingTime && (
-							<div class="reading-time">
-								<svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-									<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
-								</svg>
-								{readingTime}
+					<article>
+						{heroImage && (
+							<div class="hero-image animate-fadeInUp" style="animation-delay: 0.1s;">
+								<Image width={1020} height={510} src={heroImage} alt={title} />
 							</div>
 						)}
-						{updatedDate && (
-							<div class="last-updated">
-								Mis à jour le <FormattedDate date={updatedDate} />
-							</div>
-						)}
-					</div>
-					{tags && tags.length > 0 && (
-						<div class="tags-container">
-							{tags.map((tag) => (
-								<a href={`/tags/${tag}/`} class="tag">
-									{tag}
-								</a>
-							))}
-						</div>
-					)}
-				</div>
 
-				<div class="prose prose-lg max-w-none dark:prose-invert animate-fadeInUp" style="animation-delay: 0.3s;">
-					<slot />
-				</div>
-			</article>
-		</main>
+						<div class="article-header animate-fadeInUp" style="animation-delay: 0.2s;">
+							<h1 class="article-title">{title}</h1>
+							<div class="article-meta">
+								<div class="date-info">
+									<svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+										<path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+									</svg>
+									<FormattedDate date={pubDate} />
+								</div>
+								{readingTime && (
+									<div class="reading-time">
+										<svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+											<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+										</svg>
+										{readingTime}
+									</div>
+								)}
+								{updatedDate && (
+									<div class="last-updated">
+										Mis à jour le <FormattedDate date={updatedDate} />
+									</div>
+								)}
+							</div>
+							{tags && tags.length > 0 && (
+								<div class="tags-container">
+									{tags.map((tag) => (
+										<a href={`/tags/${tag}/`} class="tag">
+											{tag}
+										</a>
+									))}
+								</div>
+							)}
+						</div>
+
+						<div class="prose prose-lg max-w-none dark:prose-invert animate-fadeInUp" style="animation-delay: 0.3s;">
+							<slot />
+						</div>
+					</article>
+				</main>
+
+				<!-- TOC Desktop (à droite sur desktop, sticky) -->
+				<aside class="toc-wrapper desktop animate-fadeInUp" style="animation-delay: 0.2s;">
+					<TOC headings={headings} />
+				</aside>
+			</div>
+		</div>
 		<Footer />
 	</body>
 </html>

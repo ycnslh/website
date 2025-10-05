@@ -18,7 +18,8 @@ src/
 ├── components/         # Composants réutilisables
 │   ├── Header.astro   # Navigation + dark mode toggle
 │   ├── Footer.astro
-│   └── BaseHead.astro # Meta tags SEO
+│   ├── BaseHead.astro # Meta tags SEO
+│   └── TOC.astro      # Table of Contents
 ├── layouts/
 │   └── BlogPost.astro # Layout articles de blog
 ├── pages/
@@ -26,8 +27,11 @@ src/
 │   ├── about.astro
 │   ├── search.astro   # Interface Pagefind
 │   ├── blog/
-│   │   ├── [...page].astro  # Liste paginée
+│   │   ├── [...page].astro  # Liste paginée (minimaliste)
 │   │   └── [...slug].astro  # Article individuel
+│   ├── tags/
+│   │   ├── index.astro      # Liste de tous les tags
+│   │   └── [tag].astro      # Articles par tag
 │   └── rss.xml.js
 ├── content/
 │   ├── config.ts      # Schéma Zod pour validation
@@ -61,6 +65,28 @@ src/
 - Hero images (optimisées)
 - Support MDX
 - RSS feed
+- **Design minimaliste** inspiré de Chiri
+  - Liste simple : titre + date uniquement
+  - Effet hover subtil (autres items s'estompent)
+  - 10 articles par page
+  - Pas d'images dans la liste
+
+### Tags
+- Système complet de tags pour les articles
+- Page `/tags/` listant tous les tags avec compteurs
+- Pages dynamiques `/tags/{tag}/` pour chaque tag
+- Tags affichés sur chaque article (cliquables)
+- Navigation bidirectionnelle article ↔ tag
+- Utilise `import.meta.glob()` pour contourner le bug du schéma Zod
+
+### Table of Contents (TOC)
+- Génération automatique depuis les h2 et h3
+- **Desktop** : Sidebar sticky à droite (≥1024px)
+- **Mobile** : Affichage en haut de l'article (<1024px)
+- Surlignage de la section active pendant le scroll
+- Smooth scroll au clic sur un lien
+- Design transparent sans fond ni bordure
+- Couleurs adaptées au mode clair/sombre
 
 ### Search
 - Pagefind (recherche côté client, pas de serveur)
