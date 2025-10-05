@@ -10,7 +10,7 @@ type Props = CollectionEntry<'blog'>['data'] & {
 	readingTime?: string;
 };
 
-const { title, description, pubDate, updatedDate, heroImage, readingTime } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, readingTime, tags } = Astro.props;
 ---
 
 <html lang="en">
@@ -103,6 +103,39 @@ const { title, description, pubDate, updatedDate, heroImage, readingTime } = Ast
 
 			.dark .last-updated {
 				color: #6b7280;
+			}
+
+			.tags-container {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+				justify-content: center;
+				margin-top: 1rem;
+			}
+
+			.tag {
+				padding: 0.25rem 0.75rem;
+				border-radius: 9999px;
+				border: 1px solid #d1d5db;
+				font-size: 0.875rem;
+				color: #6b7280;
+				text-decoration: none;
+				transition: all 0.2s;
+			}
+
+			.tag:hover {
+				background-color: #f3f4f6;
+				color: #000;
+			}
+
+			.dark .tag {
+				border-color: #4b5563;
+				color: #9ca3af;
+			}
+
+			.dark .tag:hover {
+				background-color: #374151;
+				color: #fff;
 			}
 
 
@@ -239,6 +272,15 @@ const { title, description, pubDate, updatedDate, heroImage, readingTime } = Ast
 							</div>
 						)}
 					</div>
+					{tags && tags.length > 0 && (
+						<div class="tags-container">
+							{tags.map((tag) => (
+								<a href={`/tags/${tag}/`} class="tag">
+									{tag}
+								</a>
+							))}
+						</div>
+					)}
 				</div>
 
 				<div class="prose prose-lg max-w-none dark:prose-invert animate-fadeInUp" style="animation-delay: 0.3s;">

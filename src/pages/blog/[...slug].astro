@@ -5,18 +5,30 @@ import getReadingTime from 'reading-time';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
-	return posts.map((post) => ({
-		params: { slug: post.id },
-		props: post,
-	}));
+	const postModules = import.meta.glob('../../content/blog/*.{md,mdx}', { eager: true });
+
+	return posts.map((post) => {
+		// Trouver le module correspondant pour récupérer les tags du frontmatter
+		const matchingModule = Object.values(postModules).find((module: any) =>
+			module.frontmatter?.title === post.data.title
+		) as any;
+
+		return {
+			params: { slug: post.id },
+			props: {
+				...post,
+				tags: matchingModule?.frontmatter?.tags || []
+			},
+		};
+	});
 }
-type Props = CollectionEntry<'blog'>;
+type Props = CollectionEntry<'blog'> & { tags: string[] };
 
 const post = Astro.props;
 const { Content } = await render(post);
 const readingTime = getReadingTime(post.body);
 ---
 
-<BlogPost {...post.data} readingTime={readingTime.text}>
+<BlogPost {...post.data} tags={post.tags} readingTime={readingTime.text}>
 	<Content />
 </BlogPost>
