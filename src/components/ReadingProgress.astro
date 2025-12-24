@@ -1,0 +1,73 @@
+<div class="reading-progress-container">
+  <div class="reading-progress-bar" id="reading-progress"></div>
+</div>
+
+<style>
+  .reading-progress-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--color-surface);
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 300ms ease;
+  }
+
+  .reading-progress-container.visible {
+    opacity: 1;
+  }
+
+  .reading-progress-bar {
+    height: 100%;
+    background: var(--gradient-accent);
+    width: 0%;
+    transition: width 150ms ease-out;
+  }
+</style>
+
+<script>
+  function initReadingProgress() {
+    const progressBar = document.getElementById('reading-progress');
+    const progressContainer = progressBar?.parentElement;
+
+    if (!progressBar || !progressContainer) return;
+
+    let ticking = false;
+
+    function updateProgress() {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight - windowHeight;
+      const scrolled = window.scrollY;
+      const progress = (scrolled / documentHeight) * 100;
+
+      progressBar.style.width = `${Math.min(progress, 100)}%`;
+
+      // Show progress bar after scrolling a bit
+      if (scrolled > 100) {
+        progressContainer.classList.add('visible');
+      } else {
+        progressContainer.classList.remove('visible');
+      }
+
+      ticking = false;
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        window.requestAnimationFrame(updateProgress);
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    updateProgress();
+  }
+
+  // Init on load
+  document.addEventListener('DOMContentLoaded', initReadingProgress);
+
+  // Re-init on Astro view transitions
+  document.addEventListener('astro:page-load', initReadingProgress);
+</script>

@@ -2,6 +2,7 @@
 // Import the global.css file here so that it is included on
 // all pages through the use of the <BaseHead /> component.
 import '../styles/global.css';
+import ThemeScript from './ThemeScript.astro';
 import type { ImageMetadata } from 'astro';
 import FallbackImage from '../assets/blog-placeholder-1.jpg';
 import { SITE_TITLE } from '../consts';
@@ -49,6 +50,9 @@ const { title, description, image = FallbackImage } = Astro.props;
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={new URL(image.src, Astro.url)} />
+<meta property="og:image:alt" content={title} />
+<meta property="og:site_name" content={SITE_TITLE} />
+<meta property="og:locale" content="en_US" />
 
 <!-- Twitter -->
 <meta property="twitter:card" content="summary_large_image" />
@@ -56,18 +60,9 @@ const { title, description, image = FallbackImage } = Astro.props;
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={new URL(image.src, Astro.url)} />
+<meta property="twitter:image:alt" content={title} />
+<meta property="twitter:creator" content="@__reho" />
+<meta property="twitter:site" content="@__reho" />
 
-<!-- Listen for system theme changes -->
-<script>
-  window.addEventListener('DOMContentLoaded', function() {
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-      if (!('theme' in localStorage)) {
-        if (e.matches) {
-          document.documentElement.classList.add('dark')
-        } else {
-          document.documentElement.classList.remove('dark')
-        }
-      }
-    })
-  })
-</script>
+<!-- Theme initialization and toggle -->
+<ThemeScript />

@@ -1,19 +1,35 @@
 ---
 import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import TOC from '../components/TOC.astro';
+import ShareButtons from '../components/ShareButtons.astro';
+import RelatedPosts from '../components/RelatedPosts.astro';
+import Badge from '../components/ui/Badge.astro';
+import SkipLink from '../components/SkipLink.astro';
+import ReadingProgress from '../components/ReadingProgress.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { getRelatedPosts } from '../utils/relatedPosts';
 
 type Props = CollectionEntry<'blog'>['data'] & {
 	readingTime?: string;
 	headings?: MarkdownHeading[];
+	entry?: CollectionEntry<'blog'>;
+	tags?: string[];
 };
 
-const { title, description, pubDate, updatedDate, heroImage, readingTime, tags, headings = [] } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, readingTime, tags, headings = [], entry } = Astro.props;
+
+// Get all posts for related posts
+const allPosts = await getCollection('blog');
+const relatedPosts = entry ? getRelatedPosts(entry, allPosts, 3) : [];
+
+// Build URL for sharing
+const currentUrl = Astro.url.pathname;
 ---
 
 <html lang="en">
@@ -27,10 +43,6 @@ const { title, description, pubDate, updatedDate, heroImage, readingTime, tags, 
 		</script>
 		<BaseHead title={title} description={description} />
 		<style>
-			body {
-				padding-bottom: 6rem;
-			}
-
 			.article-container {
 				max-width: 1200px;
 				margin: 0 auto;
@@ -160,31 +172,6 @@ const { title, description, pubDate, updatedDate, heroImage, readingTime, tags, 
 				margin-top: 1rem;
 			}
 
-			.tag {
-				padding: 0.25rem 0.75rem;
-				border-radius: 9999px;
-				border: 1px solid #d1d5db;
-				font-size: 0.875rem;
-				color: #6b7280;
-				text-decoration: none;
-				transition: all 0.2s;
-			}
-
-			.tag:hover {
-				background-color: #f3f4f6;
-				color: #000;
-			}
-
-			.dark .tag {
-				border-color: #4b5563;
-				color: #9ca3af;
-			}
-
-			.dark .tag:hover {
-				background-color: #374151;
-				color: #fff;
-			}
-
 
 			/* Simple heading styles - direct targeting */
 			h1 {
@@ -240,23 +227,6 @@ const { title, description, pubDate, updatedDate, heroImage, readingTime, tags, 
 			}
 
 
-			/* Animations */
-			@keyframes fadeInUp {
-				from {
-					opacity: 0;
-					transform: translateY(30px);
-				}
-				to {
-					opacity: 1;
-					transform: translateY(0);
-				}
-			}
-
-			.animate-fadeInUp {
-				animation: fadeInUp 0.8s ease-out forwards;
-				opacity: 0;
-			}
-
 			@media (max-width: 768px) {
 				main {
 					padding: 1rem;
@@ -287,23 +257,30 @@ const { title, description, pubDate, updatedDate, heroImage, readingTime, tags, 
 	</head>
 
 	<body>
+		<ReadingProgress />
+		<SkipLink />
 		<Header />
+		<Breadcrumbs items={[
+			{ label: 'Home', href: '/' },
+			{ label: 'Blog', href: '/blog' },
+			{ label: title }
+		]} />
 		<div class="article-container">
 			<div class="article-layout">
-				<main class="animate-fadeInUp">
+				<main id="main-content">
 					<!-- TOC Mobile (en haut sur mobile) -->
-					<div class="toc-wrapper mobile animate-fadeInUp" style="animation-delay: 0.1s;">
+					<div class="toc-wrapper mobile">
 						<TOC headings={headings} />
 					</div>
 
 					<article>
 						{heroImage && (
-							<div class="hero-image animate-fadeInUp" style="animation-delay: 0.1s;">
+							<div class="hero-image">
 								<Image width={1020} height={510} src={heroImage} alt={title} />
 							</div>
 						)}
 
-						<div class="article-header animate-fadeInUp" style="animation-delay: 0.2s;">
+						<div class="article-header">
 							<h1 class="article-title">{title}</h1>
 							<div class="article-meta">
 								<div class="date-info">
@@ -322,29 +299,41 @@ const { title, description, pubDate, updatedDate, heroImage, readingTime, tags, 
 								)}
 								{updatedDate && (
 									<div class="last-updated">
-										Mis à jour le <FormattedDate date={updatedDate} />
+										Updated <FormattedDate date={updatedDate} />
 									</div>
 								)}
 							</div>
 							{tags && tags.length > 0 && (
 								<div class="tags-container">
 									{tags.map((tag) => (
-										<a href={`/tags/${tag}/`} class="tag">
+										<Badge variant="muted" href={`/tags/${tag}/`}>
 											{tag}
-										</a>
+										</Badge>
 									))}
 								</div>
 							)}
 						</div>
 
-						<div class="prose prose-lg max-w-none dark:prose-invert animate-fadeInUp" style="animation-delay: 0.3s;">
+						<div class="prose prose-lg max-w-none dark:prose-invert">
 							<slot />
 						</div>
+
+						<!-- Share Buttons -->
+						<div>
+							<ShareButtons title={title} description={description} url={currentUrl} />
+						</div>
+
+						<!-- Related Posts -->
+						{relatedPosts.length > 0 && (
+							<div>
+								<RelatedPosts posts={relatedPosts} />
+							</div>
+						)}
 					</article>
 				</main>
 
 				<!-- TOC Desktop (à droite sur desktop, sticky) -->
-				<aside class="toc-wrapper desktop animate-fadeInUp" style="animation-delay: 0.2s;">
+				<aside class="toc-wrapper desktop">
 					<TOC headings={headings} />
 				</aside>
 			</div>

@@ -1,0 +1,143 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Button from '../components/ui/Button.astro';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="404 - Page Not Found" description="The page you're looking for doesn't exist" />
+		<style>
+			main {
+				min-height: 70vh;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				padding: 4rem 1rem;
+				text-align: center;
+			}
+
+			.error-code {
+				font-size: clamp(6rem, 15vw, 12rem);
+				font-weight: 900;
+				line-height: 1;
+				background: var(--gradient-accent);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+				margin-bottom: 1rem;
+			}
+
+			.error-title {
+				font-size: clamp(1.5rem, 4vw, 2.5rem);
+				font-weight: 700;
+				color: var(--color-text);
+				margin-bottom: 1rem;
+			}
+
+			.error-description {
+				font-size: 1.125rem;
+				color: var(--color-muted);
+				max-width: 500px;
+				margin: 0 auto 2.5rem;
+				line-height: 1.6;
+			}
+
+			.actions {
+				display: flex;
+				gap: 1rem;
+				flex-wrap: wrap;
+				justify-content: center;
+			}
+
+			.suggestions {
+				margin-top: 4rem;
+				max-width: 600px;
+			}
+
+			.suggestions-title {
+				font-size: 1.25rem;
+				font-weight: 600;
+				color: var(--color-text);
+				margin-bottom: 1rem;
+			}
+
+			.suggestions-list {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+				display: flex;
+				flex-direction: column;
+				gap: 0.75rem;
+			}
+
+			.suggestions-list li {
+				text-align: left;
+			}
+
+			.suggestions-list a {
+				color: var(--color-accent);
+				text-decoration: none;
+				transition: color 200ms ease;
+			}
+
+			.suggestions-list a:hover {
+				color: var(--color-accent-hover);
+				text-decoration: underline;
+			}
+
+			/* Animations */
+			@keyframes float {
+				0%, 100% {
+					transform: translateY(0);
+				}
+				50% {
+					transform: translateY(-20px);
+				}
+			}
+
+			.error-code {
+				animation: float 3s ease-in-out infinite;
+			}
+
+			@media (max-width: 768px) {
+				.suggestions {
+					margin-top: 3rem;
+				}
+			}
+		</style>
+	</head>
+	<body data-pagefind-ignore>
+		<Header />
+		<main>
+			<h1 class="error-code">404</h1>
+			<h2 class="error-title">
+				Page Not Found
+			</h2>
+			<p class="error-description">
+				Oops! The page you're looking for doesn't exist. It might have been moved or deleted.
+			</p>
+			<div class="actions">
+				<Button variant="primary" size="lg" href="/">
+					Go Home
+				</Button>
+				<Button variant="outline" size="lg" href="/blog">
+					Browse Blog
+				</Button>
+			</div>
+
+			<div class="suggestions">
+				<h3 class="suggestions-title">You might be looking for:</h3>
+				<ul class="suggestions-list">
+					<li>→ <a href="/blog">Recent blog posts</a></li>
+					<li>→ <a href="/tags">Browse by tags</a></li>
+					<li>→ <a href="/about">About me</a></li>
+				</ul>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>

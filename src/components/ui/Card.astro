@@ -1,0 +1,38 @@
+---
+export interface Props {
+  class?: string;
+  hover?: boolean;
+}
+
+const { class: className, hover = false } = Astro.props;
+---
+
+<div class:list={['card', hover && 'card-hover', className]}>
+  <slot />
+</div>
+
+<style>
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .card-hover {
+    transition: transform 300ms ease, box-shadow 300ms ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  :global(.dark) .card-hover:hover {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  }
+</style>

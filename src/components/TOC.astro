@@ -12,7 +12,7 @@ const tocHeadings = headings.filter(h => h.depth <= 3);
 ---
 
 {tocHeadings.length > 0 && (
-	<nav class="toc" id="toc">
+	<nav class="toc" id="toc" aria-label="Table of contents">
 		<h2 class="toc-title">Table of Contents</h2>
 		<ul class="toc-list">
 			{tocHeadings.map((heading) => (
@@ -36,12 +36,8 @@ const tocHeadings = headings.filter(h => h.depth <= 3);
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
-		color: #000000;
+		color: var(--color-text);
 		margin-bottom: 1rem;
-	}
-
-	:global(.dark) .toc-title {
-		color: #ffffff;
 	}
 
 	.toc-list {
@@ -59,37 +55,29 @@ const tocHeadings = headings.filter(h => h.depth <= 3);
 	}
 
 	.toc-level-3 {
-		padding-left: 1rem;
+		padding-left: 1.5rem;
 		font-size: 0.875rem;
 	}
 
 	.toc-link {
-		color: #6b7280;
+		color: var(--color-muted);
 		text-decoration: none;
-		transition: color 0.2s ease;
+		transition: color 200ms ease, transform 200ms ease;
 		display: block;
 		line-height: 1.5;
-	}
-
-	.dark .toc-link {
-		color: #9ca3af;
+		padding-left: 0.5rem;
+		border-left: 2px solid transparent;
 	}
 
 	.toc-link:hover {
-		color: #000000;
-	}
-
-	:global(.dark) .toc-link:hover {
-		color: #ffffff;
+		color: var(--color-text);
+		transform: translateX(4px);
 	}
 
 	.toc-link.active {
-		color: #000000;
+		color: var(--color-accent);
 		font-weight: 600;
-	}
-
-	:global(.dark) .toc-link.active {
-		color: #ffffff;
+		border-left-color: var(--color-accent);
 	}
 </style>
 
@@ -99,6 +87,8 @@ const tocHeadings = headings.filter(h => h.depth <= 3);
 		const headings = document.querySelectorAll('article h2, article h3');
 
 		if (!tocLinks.length || !headings.length) return;
+
+		let ticking = false;
 
 		function updateActiveLink() {
 			let current = '';
@@ -116,9 +106,19 @@ const tocHeadings = headings.filter(h => h.depth <= 3);
 					link.classList.add('active');
 				}
 			});
+
+			ticking = false;
 		}
 
-		window.addEventListener('scroll', updateActiveLink);
+		// Throttled scroll handler using requestAnimationFrame
+		function onScroll() {
+			if (!ticking) {
+				window.requestAnimationFrame(updateActiveLink);
+				ticking = true;
+			}
+		}
+
+		window.addEventListener('scroll', onScroll, { passive: true });
 		updateActiveLink();
 
 		// Smooth scroll

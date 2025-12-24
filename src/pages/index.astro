@@ -1,26 +1,257 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import Card from '../components/ui/Card.astro';
+import Button from '../components/ui/Button.astro';
+import Badge from '../components/ui/Badge.astro';
+import SkipLink from '../components/SkipLink.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+// Get latest 3 posts for featured section with tags via import.meta.glob
+const allPosts = await getCollection('blog');
+const postModules = import.meta.glob('../content/blog/*.{md,mdx}', { eager: true });
+
+// Enrich posts with tags and readingTime from frontmatter
+const enrichedPosts = allPosts.map((post) => {
+	const postPath = `../content/blog/${post.id}.md`;
+	const postPathMdx = `../content/blog/${post.id}.mdx`;
+	const module = postModules[postPath] || postModules[postPathMdx];
+	return {
+		...post,
+		tags: (module as any)?.frontmatter?.tags || [],
+		readingTime: (module as any)?.frontmatter?.readingTime || null,
+	};
+});
+
+const featuredPosts = enrichedPosts
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 3);
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<script is:inline>
-			if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-				document.documentElement.classList.add('dark')
-			} else {
-				document.documentElement.classList.remove('dark')
-			}
-		</script>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			.hero {
+				min-height: 70vh;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				padding: 4rem 1rem;
+				position: relative;
+			}
+
+			.hero::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: var(--gradient-warm);
+				opacity: 0.5;
+				z-index: -1;
+			}
+
+			.hero-content {
+				max-width: 800px;
+				text-align: center;
+				z-index: 1;
+			}
+
+			.hero-title {
+				font-size: clamp(3rem, 8vw, 6rem);
+				font-weight: 800;
+				margin-bottom: 1rem;
+				color: var(--color-text);
+				letter-spacing: -0.02em;
+			}
+
+			.hero-subtitle {
+				font-size: clamp(1.25rem, 3vw, 1.75rem);
+				color: var(--color-muted);
+				margin-bottom: 2rem;
+				font-weight: 500;
+			}
+
+			.hero-description {
+				font-size: 1.125rem;
+				color: var(--color-muted);
+				margin-bottom: 2.5rem;
+				line-height: 1.6;
+				max-width: 600px;
+				margin-left: auto;
+				margin-right: auto;
+			}
+
+			.cta-buttons {
+				display: flex;
+				gap: 1rem;
+				justify-content: center;
+				flex-wrap: wrap;
+			}
+
+			.featured-section {
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 4rem 1rem;
+			}
+
+			.section-title {
+				font-size: 2rem;
+				font-weight: 700;
+				margin-bottom: 2rem;
+				text-align: center;
+				color: var(--color-text);
+			}
+
+			.posts-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+				gap: 2rem;
+			}
+
+			.post-card-content {
+				display: flex;
+				flex-direction: column;
+				height: 100%;
+			}
+
+			.post-card-link {
+				text-decoration: none;
+				color: inherit;
+				display: block;
+				flex: 1;
+			}
+
+			.post-card-title {
+				font-size: 1.25rem;
+				font-weight: 600;
+				color: var(--color-text);
+				margin-bottom: 0.5rem;
+				transition: color 200ms ease;
+			}
+
+			.post-card-link:hover .post-card-title {
+				color: var(--color-accent);
+			}
+
+			.post-card-description {
+				color: var(--color-muted);
+				font-size: 0.9375rem;
+				line-height: 1.6;
+				margin-bottom: 1rem;
+			}
+
+			.post-card-footer {
+				margin-top: auto;
+				padding-top: 1rem;
+				border-top: 1px solid var(--color-border);
+			}
+
+			.post-card-meta {
+				display: flex;
+				align-items: center;
+				gap: 1rem;
+				font-size: 0.875rem;
+				color: var(--color-muted);
+				flex-wrap: wrap;
+				margin-bottom: 0.75rem;
+			}
+
+			.post-card-date {
+				display: flex;
+				align-items: center;
+				gap: 0.25rem;
+			}
+
+			.post-card-tags {
+				display: flex;
+				gap: 0.5rem;
+				flex-wrap: wrap;
+			}
+
+			@media (max-width: 768px) {
+				.hero {
+					min-height: 60vh;
+					padding: 2rem 1rem;
+				}
+
+				.posts-grid {
+					grid-template-columns: 1fr;
+				}
+			}
+		</style>
 	</head>
-	<body class="overflow-hidden h-screen">
+	<body>
+		<SkipLink />
 		<Header />
-		<main class="flex flex-col items-center justify-center h-screen px-4">
-			<h1 class="text-6xl md:text-8xl font-bold mb-4 text-center">Reho</h1>
-			<h2 class="text-xl md:text-2xl text-gray-600 dark:text-gray-400 text-center">Systems Engineer</h2>
+
+		<main id="main-content">
+			<!-- Hero Section -->
+			<section class="hero">
+				<div class="hero-content">
+					<h1 class="hero-title">Reho</h1>
+					<h2 class="hero-subtitle">Systems Engineer</h2>
+					<p class="hero-description">
+						Building reliable systems and sharing knowledge about infrastructure, automation, and software engineering.
+					</p>
+					<div class="cta-buttons">
+						<Button variant="primary" size="lg" href="/blog">
+							Read the Blog
+						</Button>
+						<Button variant="outline" size="lg" href="/about">
+							About Me
+						</Button>
+					</div>
+				</div>
+			</section>
+
+			<!-- Featured Posts Section -->
+			{featuredPosts.length > 0 && (
+				<section class="featured-section">
+					<h2 class="section-title">Latest Posts</h2>
+					<div class="posts-grid">
+						{featuredPosts.map((post) => (
+							<Card hover>
+								<div class="post-card-content">
+									<a href={`/blog/${post.id}/`} class="post-card-link">
+										<h3 class="post-card-title">{post.data.title}</h3>
+										<p class="post-card-description">{post.data.description}</p>
+									</a>
+									<div class="post-card-footer">
+										<div class="post-card-meta">
+											<span class="post-card-date">
+												<svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+													<path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+												</svg>
+												<FormattedDate date={post.data.pubDate} />
+											</span>
+											{post.readingTime && (
+												<span>📖 {post.readingTime}</span>
+											)}
+										</div>
+										{post.tags && post.tags.length > 0 && (
+											<div class="post-card-tags">
+												{post.tags.map((tag: string) => (
+													<Badge variant="default" href={`/tags/${tag}/`}>{tag}</Badge>
+												))}
+											</div>
+										)}
+									</div>
+								</div>
+							</Card>
+						))}
+					</div>
+				</section>
+			)}
 		</main>
+
+		<Footer />
 	</body>
 </html>

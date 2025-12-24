@@ -2,6 +2,8 @@
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import SkipLink from '../../components/SkipLink.astro';
 import { SITE_TITLE } from '../../consts';
 
 export async function getStaticPaths() {
@@ -41,10 +43,6 @@ const { posts } = Astro.props;
 		</script>
 		<BaseHead title={`Tag: ${tag} - ${SITE_TITLE}`} description={`Posts tagged with ${tag}`} />
 		<style>
-			body {
-				padding-bottom: 6rem;
-			}
-
 			main {
 				max-width: 800px;
 				margin: 0 auto;
@@ -159,32 +157,23 @@ const { posts } = Astro.props;
 				}
 			}
 
-			@keyframes fadeInDown {
-				from {
-					opacity: 0;
-					transform: translateY(-30px);
-				}
-				to {
-					opacity: 1;
-					transform: translateY(0);
-				}
-			}
-
-			.animate-fadeInDown {
-				animation: fadeInDown 0.8s ease-out forwards;
-				opacity: 0;
-			}
 		</style>
 	</head>
 	<body>
+		<SkipLink />
 		<Header />
-		<main class="animate-fadeInDown">
-			<div class="tag-header animate-fadeInDown" style="animation-delay: 0.1s;">
+		<Breadcrumbs items={[
+			{ label: 'Home', href: '/' },
+			{ label: 'Tags', href: '/tags' },
+			{ label: tag }
+		]} />
+		<main id="main-content">
+			<div class="tag-header">
 				<a href="/tags" class="back-link">← Tous les tags</a>
 				<h1 class="tag-title">Tag: {tag}</h1>
 				<p class="tag-subtitle">{posts.length} article{posts.length > 1 ? 's' : ''}</p>
 			</div>
-			<ul class="posts-list animate-fadeInDown" style="animation-delay: 0.2s;">
+			<ul class="posts-list">
 				{posts.map((post) => (
 					<li class="post-item">
 						<a href={post.url} class="post-link">
